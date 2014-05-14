@@ -1,12 +1,13 @@
 import time
 import urllib
 import xlrd
+import pandas as pd
 from xlutils.display import cell_display
-from prettytable import PrettyTable
 from xlrd.sheet import Cell
 
 timerStart = time.time()
-dataset_list = ('A163158W','A181479W')
+dataset_list = ('A163158W','A181518A','A2325846C')
+outputSeries = pd.DataFrame()
 
 for dataset in dataset_list:
     datasetRange = dataset+'_Data'
@@ -32,14 +33,13 @@ for dataset in dataset_list:
                                 cval = cell_display(Cell(cty, cval))
                                 #sval = xlrd.xldate_as_tuple(cval,datemode)
                             dataset_dict[xlrd.xldate_as_tuple(cdate, datemode)] = cval
-    x = PrettyTable()
-    x.add_column("Date", dataset_dict.keys())
-    x.add_column(dataset, dataset_dict.values())
-    x.sortby = "Date"
-    print x
+    s = pd.DataFrame(dataset_dict.items(), columns=['Date', dataset])
+
+    s = s.set_index('Date')
+    outputSeries = pd.concat([outputSeries, s], axis=1)
+
+outputSeries.to_csv('/tmp/output.csv')
+print outputSeries
 timerEnd = time.time()
 timerInterval = timerEnd - timerStart
 print "process took "+str(timerInterval)+" seconds"
-
-#for key, value in sorted(dataset_dict.items()):
-#    print("{} : {}".format(key, value))
