@@ -2,8 +2,8 @@ import time
 import urllib
 import xlrd
 import pandas as pd
-from xlutils.display import cell_display
-from xlrd.sheet import Cell
+#from xlutils.display import cell_display
+#from xlrd.sheet import Cell
 
 timerStart = time.time()
 
@@ -18,9 +18,9 @@ for dataset in dataset_list:
     # append _Data to the dataset name to access only series data
     datasetRange = dataset+'_Data'
     # Call the most recent publication using the OpenAgent&sid= string and download it to tmp drive
-    filename = urllib.urlretrieve("http://www.ausstats.abs.gov.au/ausstats/Meisubs.nsf/GetTimeSeries?OpenAgent&sid="+dataset, '/tmp/'+dataset+'.xls')
+    filename = urllib.urlretrieve("http://www.ausstats.abs.gov.au/ausstats/Meisubs.nsf/GetTimeSeries?OpenAgent&sid="+dataset, './'+dataset+'.xls')
     # use xlrd to open the workbook
-    book = xlrd.open_workbook('/tmp/'+dataset+'.xls')
+    book = xlrd.open_workbook('./'+dataset+'.xls')
     # important - set xlrd datemode to match the excel book - avoiding any 1900/1904 problems
     datemode = book.datemode
     # build a temporary dictionary to hold the series data
@@ -55,7 +55,7 @@ for dataset in dataset_list:
     # concatenate the temp dataframe to the master dataframe.  This will add a new column, creating new keys as required.
     outputSeries = pd.concat([outputSeries, s], axis=1)
 
-outputSeries.to_csv('/tmp/output.csv')
+outputSeries.to_csv('./output.csv')
 print outputSeries
 timerEnd = time.time()
 timerInterval = timerEnd - timerStart
